@@ -46,7 +46,7 @@ class BusinessHours:
         elif(self.datetime1.hour > self.worktiming[1]):
             hoursinfirstday = 0;
         else:
-            hoursinfirstday = worktiming[1]-self.datetime1.hour
+            hoursinfirstday = self.worktiming[1]-self.datetime1.hour
         # To calculate working hours in the last day
         if(self.datetime2.hour > self.worktiming[1] ):
             hoursinlastday = hoursinaday;
