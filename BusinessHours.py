@@ -34,30 +34,7 @@ class BusinessHours:
         return days
 
     def gethours(self):
-        """
-        Return the difference in hours.
-        """
-        days = self.getdays()
-        #  calculate hours
-        days = days - 2  # -2 to remove the start day and the last day
-        hoursinaday = self.worktiming[1]-self.worktiming[0]
-        hours = days * hoursinaday
-        # To calculate working hours in the first day.
-        if(self.datetime1.hour < self.worktiming[0]):
-            hoursinfirstday = hoursinaday
-        elif(self.datetime1.hour > self.worktiming[1]):
-            hoursinfirstday = 0
-        else:
-            hoursinfirstday = self.worktiming[1]-self.datetime1.hour
-        # To calculate working hours in the last day
-        if(self.datetime2.hour > self.worktiming[1]):
-            hoursinlastday = hoursinaday
-        elif(self.datetime2.hour < self.worktiming[0]):
-            hoursinlastday = 0
-        else:
-            hoursinlastday = self.datetime2.hour - self.worktiming[0]
-        hours = hours + hoursinfirstday + hoursinlastday
-        return hours
+		return int(self.getminutes() / 60)
 
     def getminutes(self):
         """
