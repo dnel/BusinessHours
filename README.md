@@ -7,12 +7,12 @@ There are 3 methods available:
 
 getminutes()
 
-Returns the number of working minutes between the two datetimes.
+Returns and integer of the number of working minutes between the two datetimes.
 
 gethours()
 
-Returns the number of full hours worked based on the number of working minutes divided by 60. Reminder minutes will be truncated, if remainder minutes are required perform a modulus of getminutes().
+Returns an integer of the number of full hours worked. calculated from the return of getminutes() divided by 60. Aways rounded down, reminder minutes are truncated by the integer conversion, if remainder minutes are required perform a modulus of getminutes().
 
 getdays()
 
-Returns the number of full days worked based on the number of working minutes divided by the number in hours in a working day.
+Returns an integrer of the number of full days worked calculated from the return of getminutes() divided by the number of available minutes in a working day.
