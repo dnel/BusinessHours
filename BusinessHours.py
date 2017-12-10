@@ -9,30 +9,12 @@ class BusinessHours:
         self.worktiming = worktiming
         self.datetime1 = datetime1
         self.datetime2 = datetime2
-        self.day_minutes = (self.worktiming[1]-self.worktiming[0])*3600
+        self.day_hours = (self.worktiming[1]-self.worktiming[0])
+        self.day_minutes = self.day_hours * 60 # minutes in a work day
 
     def getdays(self):
-        """
-        Return the difference in days.
-        """
-        days = (self.datetime2-self.datetime1).days
-        # exclude any day in the week marked as holiday (ex: saturday , sunday)
-        noofweeks = days / 7
-        extradays = days % 7
-        startday = self.datetime1.isoweekday()
-        days = days - (noofweeks * self.weekends.__len__())
-        for weekend in self.weekends:
-            if(startday == weekend):
-                days = days - 1
-            else:
-                if(weekend >= startday):
-                    if(startday+extradays >= weekend):
-                        days = days - 1
-                else:
-                    if(7-startday+extradays >= weekend):
-                        days = days - 1
-        return days
-
+        return int(self.getminutes() / self.day_minutes)
+    
     def gethours(self):
 		return int(self.getminutes() / 60)
 
@@ -43,7 +25,7 @@ class BusinessHours:
         # Set initial default variables
         dt_start = self.datetime1  # datetime of start
         dt_end = self.datetime2    # datetime of end
-        worktime = 0               # remaining minutes after full days
+        worktime_in_seconds = 0
 
         if dt_start.date() == dt_end.date():
             # starts and ends on same workday
@@ -69,38 +51,41 @@ class BusinessHours:
                         day=dt_end.day,
                         hour=self.worktiming[1],
                         minute=0)
-                worktime = (dt_end-dt_start).total_seconds()
+                worktime_in_seconds = (dt_end-dt_start).total_seconds()
         elif (dt_end-dt_start).days < 0:
             # ends before start
             return 0
         else:
+            # start and ends on different days
             current_day = dt_start  # marker for counting workdays
             while not current_day.date() == dt_end.date():
                 if not self.is_weekend(current_day):
                     if current_day == dt_start:
                         # increment hours of first day
                         if current_day.hour < self.worktiming[0]:
-                            worktime += self.day_minutes  # add 1 day
+                            # starts before the work day
+                            worktime_in_seconds += self.day_minutes*60  # add 1 full work day
                         elif current_day.hour >= self.worktiming[1]:
                             pass  # no time on first day
                         else:
+                            # starts during the working day
                             dt_currentday_close = datetime.datetime(
                                 year=dt_start.year,
                                 month=dt_start.month,
                                 day=dt_start.day,
                                 hour=self.worktiming[1],
                                 minute=0)
-                            worktime += (dt_currentday_close
+                            worktime_in_seconds += (dt_currentday_close
                                          - dt_start).total_seconds()
                     else:
                         # increment one full day
-                        worktime += self.day_minutes
+                        worktime_in_seconds += self.day_minutes*60
                 current_day += datetime.timedelta(days=1)  # next day
             # Time on the last day
             if not self.is_weekend(dt_end):
                 if dt_end.hour >= self.worktiming[1]:  # finish after close
                     # Add a full day
-                    worktime += self.day_minutes
+                    worktime_in_seconds += self.day_minutes*60
                 elif dt_end.hour < self.worktiming[0]:  # close before opening
                     pass  # no time added
                 else:
@@ -111,8 +96,8 @@ class BusinessHours:
                         day=dt_end.day,
                         hour=self.worktiming[0],
                         minute=0)
-                    worktime += (dt_end-dt_end_open).total_seconds()
-        return int(worktime / 60)
+                    worktime_in_seconds += (dt_end-dt_end_open).total_seconds()
+        return int(worktime_in_seconds / 60)
 
     def is_weekend(self, datetime):
         """
