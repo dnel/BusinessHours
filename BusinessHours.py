@@ -1,22 +1,21 @@
 import datetime
-
-
 class BusinessHours:
 
-    def __init__(self, datetime1, datetime2, worktiming=[9, 17],
-                 weekends=[6, 7]):
+    def __init__(self, datetime1, datetime2, worktiming=[8, 17],
+                 weekends=[6, 7], holidays=None):
         self.weekends = weekends
         self.worktiming = worktiming
         self.datetime1 = datetime1
         self.datetime2 = datetime2
         self.day_hours = (self.worktiming[1]-self.worktiming[0])
         self.day_minutes = self.day_hours * 60 # minutes in a work day
+        self.holidays = holidays
 
     def getdays(self):
         return int(self.getminutes() / self.day_minutes)
     
     def gethours(self):
-		return int(self.getminutes() / 60)
+        return int(self.getminutes() / 60)
 
     def getminutes(self):
         """
@@ -30,7 +29,7 @@ class BusinessHours:
         if dt_start.date() == dt_end.date():
             # starts and ends on same workday
             full_days = 0
-            if self.is_weekend(dt_start):
+            if self.is_weekend(dt_start) and not self.is_holiday(dt_start):
                 return 0
             else:
                 if dt_start.hour < self.worktiming[0]:
@@ -59,7 +58,7 @@ class BusinessHours:
             # start and ends on different days
             current_day = dt_start  # marker for counting workdays
             while not current_day.date() == dt_end.date():
-                if not self.is_weekend(current_day):
+                if not self.is_weekend(current_day) and not self.is_holiday(current_day):
                     if current_day == dt_start:
                         # increment hours of first day
                         if current_day.hour < self.worktiming[0]:
@@ -82,7 +81,7 @@ class BusinessHours:
                         worktime_in_seconds += self.day_minutes*60
                 current_day += datetime.timedelta(days=1)  # next day
             # Time on the last day
-            if not self.is_weekend(dt_end):
+            if not self.is_weekend(dt_end) and not self.is_holiday(dt_end):
                 if dt_end.hour >= self.worktiming[1]:  # finish after close
                     # Add a full day
                     worktime_in_seconds += self.day_minutes*60
@@ -106,4 +105,10 @@ class BusinessHours:
         for weekend in self.weekends:
             if datetime.isoweekday() == weekend:
                 return True
+        return False
+    
+    def is_holiday(self, datetime):
+        if datetime.date() in self.holidays:
+            print(f"{datetime} is holiday")
+            return True     
         return False
