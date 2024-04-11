@@ -103,7 +103,5 @@ class BusinessHours:
         """
         Returns True if datetime lands on a weekend.
         """
-        for weekend in self.weekends:
-            if datetime.isoweekday() == weekend:
-                return True
-        return False
+        return datetime.isoweekday() in self.weekends
+
