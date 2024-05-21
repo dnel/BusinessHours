@@ -1,8 +1,10 @@
 import datetime
 class BusinessHours:
 
-    def __init__(self, datetime1, datetime2, worktiming=[8, 17],
-                 weekends=[6, 7], holidays=None):
+    def __init__(self, datetime1, datetime2, 
+                 worktiming=[8, 17],
+                 weekends=[6, 7], 
+                 holidays=None):
         self.weekends = weekends
         self.worktiming = worktiming
         self.datetime1 = datetime1
@@ -12,9 +14,15 @@ class BusinessHours:
         self.holidays = holidays
 
     def getdays(self):
+        """
+        Return the difference in days.
+        """
         return int(self.getminutes() / self.day_minutes)
     
     def gethours(self):
+        """
+        Return the difference in hours.
+        """
         return int(self.getminutes() / 60)
 
     def getminutes(self):
@@ -102,13 +110,10 @@ class BusinessHours:
         """
         Returns True if datetime lands on a weekend.
         """
-        for weekend in self.weekends:
-            if datetime.isoweekday() == weekend:
-                return True
-        return False
-    
+        return datetime.isoweekday() in self.weekends
+
     def is_holiday(self, datetime):
-        if datetime.date() in self.holidays:
-            print(f"{datetime} is holiday")
-            return True     
-        return False
+        """
+        Returns True if datetime lands on a holiday.
+        """
+        return datetime.date() in self.holidays
