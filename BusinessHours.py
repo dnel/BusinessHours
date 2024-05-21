@@ -4,7 +4,7 @@ class BusinessHours:
     def __init__(self, datetime1, datetime2, 
                  worktiming=[8, 17],
                  weekends=[6, 7], 
-                 holidays=None):
+                 holidays=[]):
         self.weekends = weekends
         self.worktiming = worktiming
         self.datetime1 = datetime1
