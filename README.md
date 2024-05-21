@@ -1,26 +1,27 @@
 # Business Hours
 
-A Python module that calculates working time between two given datetimes. Opening and closing time and the weekend days are configurable.
+A Python module that calculates working time between two given 
+datetimes. Opening and closing time, weekend days and holidays are 
+configurable.
 
-## Usage
-There are 3 methods available:
+## Origin
 
-getminutes()
+This was initially a fork of solar345's [BusinessHours](https://pypi.org/project/BusinessHours/) module to add the 
+getminutes() function providing the minute-level resolution I needed. 
+It was then easier to make gethours() and getdays() a derivative of this 
+and by then I had rewritten the module leaving only superficial 
+similarities to Solar345's original module.
 
-Returns and integer of the number of working minutes between the two datetimes.
+This was originally written for Python 2 but works fine on Python 3.
 
-gethours()
+## Closures
 
-Returns an integer of the number of full hours worked. calculated from the return of getminutes() divided by 60. Aways rounded down, reminder minutes are truncated by the integer conversion, if remainder minutes are required perform a modulus of getminutes().
+Non-business days can be added as a list of datetimes or the output from
+the python-holidays module.
 
-getdays()
-
-Returns an integrer of the number of full days worked calculated from the return of getminutes() divided by the number of available minutes in a working day.
-
-
-
-## Regional holidays
-It optionally supports [python-holidays](https://github.com/vacanza/python-holidays/) to respect free holidays specific to a country or even a region.
+### Regional holidays
+It optionally supports [python-holidays](https://github.com/vacanza/python-holidays/) to respect free holidays 
+specific to a country or even a region.
 ```
 import holidays
 holidays = holidays.country_holidays('DE', subdiv="BW")
